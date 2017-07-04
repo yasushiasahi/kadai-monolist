@@ -4,9 +4,21 @@ class OwnershipsController < ApplicationController
 
     unless @item.persisted?
       # @item が保存されていない場合、先に @item を保存する
-      results = RakutenWebService::Ichiba::Item.search(itemCode: @item.code)
-
-      @item = Item.new(read(results.first))
+      
+      if params[:item_site] == "Amazon"
+        results = Amazon::Ecs.item_search(
+          @item.code,
+          search_index:  'Books',
+          dataType: 'script',
+          response_group: 'ItemAttributes, Images',
+          country:  'jp',
+          power: "Not kindle"
+        )
+        @item = Item.new(read_A(results.items.first))
+      else
+        results = RakutenWebService::Ichiba::Item.search(itemCode: @item.code)
+        @item = Item.new(read(results.first)
+      end
       @item.save
     end
 

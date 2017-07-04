@@ -6,13 +6,27 @@ class ItemsController < ApplicationController
 
     @keyword = params[:keyword]
     if @keyword
-      results = RakutenWebService::Ichiba::Item.search({
+      results_A = Amazon::Ecs.item_search(
+        @keyword,
+        search_index:  'Books',
+        dataType: 'script',
+        response_group: 'ItemAttributes, Images',
+        country:  'jp',
+        power: "Not kindle"
+      )
+      
+      results_A.items.each do |item|
+        item_A = Item.find_or_initialize_by(read_A(item))
+        @items << item_A
+      end
+
+      results_R = RakutenWebService::Ichiba::Item.search({
         keyword: @keyword,
         imageFlag: 1,
         hits: 20,
       })
 
-      results.each do |result|
+      results_R.each do |result|
         # 扱い易いように Item としてインスタンスを作成する（保存はしない）
         item = Item.find_or_initialize_by(read(result))
         @items << item

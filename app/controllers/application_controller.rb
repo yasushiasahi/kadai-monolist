@@ -24,6 +24,23 @@ class ApplicationController < ActionController::Base
       name: name,
       url: url,
       image_url: image_url,
+      site: "Rakuten",
     }
   end
+
+  def read_A(item)
+    code = item.get("ASIN")
+    name = item.get('ItemAttributes/Title')
+    url = item.get('DetailPageURL')
+    image_url = item.get('LargeImage/URL')
+
+    return {
+      code: code,
+      name: name,
+      url: url,
+      image_url: image_url,
+      site: "Amazon",
+    }
+  end
+  
 end

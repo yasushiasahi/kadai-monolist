@@ -59,3 +59,5 @@ gem 'dotenv-rails'
 group :production do
   gem 'pg'
 end
+
+gem 'amazon-ecs'
